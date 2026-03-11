@@ -3,6 +3,9 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineNuxtConfig({
     css: ["./app/assets/css/main.css"],
   compatibilityDate: '2025-07-15',
+  experimental: {
+        payloadExtraction: false
+    },
   devtools: { enabled: false },
     modules: [
         "@nuxt/icon",
@@ -46,7 +49,7 @@ export default defineNuxtConfig({
         manifest: {
             name: 'Money Tracker Pro',
             short_name: 'MoneyApp',
-            start_url: '/',
+            start_url: '/home',
             scope: '/',
             theme_color: '#10b981',
             display: 'standalone',
