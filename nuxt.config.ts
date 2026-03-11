@@ -31,6 +31,8 @@ export default defineNuxtConfig({
         manifest: {
             name: 'Money Tracker Pro',
             short_name: 'MoneyApp',
+            start_url: '/', 
+            scope: '/',
             theme_color: '#10b981',
             display: 'standalone',
             background_color: '#ffffff',
