@@ -18,20 +18,35 @@ export default defineNuxtConfig({
     },
     googleFonts: {
         families: {
-            Inter: [400, 500, 600, 700], // Pilih weight yang kamu butuhkan
+            Inter: [400, 500, 600, 700, 800],
         },
-        display: 'swap', // Optimasi loading
-        download: true,   // Download font agar di-serve dari server sendiri (lebih cepat)
+        display: 'swap',
+        download: true,
     },
     icon: {
         collections: ['iconsax', 'isax', 'solar']
+    },
+    app: {
+        head: {
+            title: 'Money Tracker Pro',
+            meta: [
+                { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' },
+                { name: 'apple-mobile-web-app-capable', content: 'yes' },
+                { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
+                { name: 'apple-mobile-web-app-title', content: 'MoneyApp' },
+                { name: 'mobile-web-app-capable', content: 'yes' },
+            ],
+            link: [
+                { rel: 'apple-touch-icon', href: '/icon-192x192.png' },
+            ]
+        }
     },
     pwa: {
         registerType: 'autoUpdate',
         manifest: {
             name: 'Money Tracker Pro',
             short_name: 'MoneyApp',
-            start_url: '/', 
+            start_url: '/',
             scope: '/',
             theme_color: '#10b981',
             display: 'standalone',
