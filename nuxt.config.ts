@@ -30,9 +30,6 @@ export default defineNuxtConfig({
     icon: {
         collections: ['iconsax', 'isax', 'solar']
     },
-    routeRules: {
-        '/': { redirect: '/home' }
-    },
     app: {
         head: {
             title: 'Money Tracker Pro',
@@ -53,7 +50,7 @@ export default defineNuxtConfig({
         manifest: {
             name: 'Money Tracker Pro',
             short_name: 'MoneyApp',
-            start_url: '/home',
+            start_url: '/',
             scope: '/',
             theme_color: '#10b981',
             display: 'standalone',
