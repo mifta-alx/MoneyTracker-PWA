@@ -1,6 +1,7 @@
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
+    ssr: true,
     css: ["./app/assets/css/main.css"],
   compatibilityDate: '2025-07-15',
   experimental: {
@@ -28,6 +29,9 @@ export default defineNuxtConfig({
     },
     icon: {
         collections: ['iconsax', 'isax', 'solar']
+    },
+    routeRules: {
+        '/': { redirect: '/home' }
     },
     app: {
         head: {
@@ -81,7 +85,11 @@ export default defineNuxtConfig({
         },
         includeAssets: ['favicon.ico', 'apple-touch-icon.png'],
     },
-
+    router: {
+        options: {
+            trailingSlash: false
+        }
+    },
     // Konfigurasi Supabase
     supabase: {
         redirect: false
