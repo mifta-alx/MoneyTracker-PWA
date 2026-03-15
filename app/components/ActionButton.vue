@@ -1,18 +1,10 @@
-<script setup lang="ts">
-
-</script>
-
 <template>
 <div>
   <NuxtLink
-      to="/home"
-      class="flex flex-col items-center justify-center text-3xl text-white bg-black rounded-full size-16 shrink-0 shadow-lg shadow-black/30"
+      to="/"
+      class="flex flex-col items-center justify-center text-3xl text-white bg-primary rounded-full size-16 shrink-0 shadow-lg shadow-primary/30"
   >
-    <Icon name="lucide:plus"/>
+    <Icon name="hugeicons:plus-sign" stroke-width="1.5"/>
   </NuxtLink>
 </div>
 </template>
-
-<style scoped>
-
-</style>

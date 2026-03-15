@@ -28,7 +28,8 @@ export default defineNuxtConfig({
         download: true,
     },
     icon: {
-        collections: ['iconsax', 'isax', 'solar']
+        collections: ['lucide', 'hugeicons'],
+        mode: 'svg',
     },
     app: {
         head: {
@@ -54,6 +55,7 @@ export default defineNuxtConfig({
             scope: '/',
             theme_color: '#10b981',
             display: 'standalone',
+            display_override: ['standalone'],
             background_color: '#ffffff',
             icons: [
                 {

@@ -6,7 +6,7 @@ definePageMeta({
 
 <template>
 <div>
-  Stats
+  <Header title="Stats"/>
 </div>
 </template>
 

@@ -6,7 +6,7 @@ const items = [
     icon: "home-03",
   },
   {
-    title: "Account",
+    title: "Accounts",
     url: "/accounts",
     icon: "wallet-01",
   },

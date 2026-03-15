@@ -3,7 +3,7 @@
 
 <template>
   <div class="min-h-screen bg-background flex">
-    <main class="p-5">
+    <main class="px-5 flex-1">
       <slot/>
     </main>
     <BottomTabNav/>
