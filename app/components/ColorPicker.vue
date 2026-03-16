@@ -31,7 +31,7 @@ const colorOptions = [
       />
 
       <div
-        class="size-8 rounded-full border transition-all duration-300"
+        class="size-8 rounded-full border transition-all duration-300 shrink-0"
         :class="[
           color.bgClass,
           modelValue === color.value
