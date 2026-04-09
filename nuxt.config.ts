@@ -3,19 +3,24 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineNuxtConfig({
     ssr: true,
     css: ["./app/assets/css/main.css"],
-  compatibilityDate: '2025-07-15',
-  experimental: {
+    compatibilityDate: '2025-07-15',
+    runtimeConfig: {
+        public: {
+            baseUrl: process.env.BASE_URL || 'http://localhost:8080/api/v1'
+        }
+    },
+    experimental: {
         payloadExtraction: false
     },
-  devtools: { enabled: false },
+    devtools: { enabled: false },
     modules: [
         "@nuxt/icon",
-        '@nuxtjs/supabase',
         '@vite-pwa/nuxt',
         '@nuxtjs/google-fonts',
+        '@pinia/nuxt',
     ],
     vite: {
-        plugins: [tailwindcss()],
+        plugins: [tailwindcss() as any],
         // optimizeDeps: {
         //     include: ["lucide-vue-next"],
         // },
@@ -83,14 +88,5 @@ export default defineNuxtConfig({
             type: 'module',
         },
         includeAssets: ['favicon.ico', 'apple-touch-icon.png'],
-    },
-    router: {
-        options: {
-            trailingSlash: false
-        }
-    },
-    // Konfigurasi Supabase
-    supabase: {
-        redirect: false
     }
 })

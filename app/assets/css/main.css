@@ -64,15 +64,15 @@
     --primary: oklch(47.928% 0.07766 162.266);
     --primary-foreground: oklch(0.985 0 0);
     /*  */
-    --gray:   oklch(70% 0.02 250);  
-  --brown:  oklch(65% 0.07 50);   
-  --orange: oklch(70% 0.15 45);   
-  --yellow: oklch(80% 0.16 85);   
-  --green:  oklch(72% 0.13 160);  
-  --blue:   oklch(70% 0.12 245);   
-  --purple: oklch(68% 0.14 300);   
-  --pink:   oklch(72% 0.12 350);
-  --red:    oklch(65% 0.18 25);
+    --gray: oklch(70% 0.02 250);
+    --brown: oklch(65% 0.07 50);
+    --orange: oklch(70% 0.15 45);
+    --yellow: oklch(80% 0.16 85);
+    --green: oklch(72% 0.13 160);
+    --blue: oklch(70% 0.12 245);
+    --purple: oklch(68% 0.14 300);
+    --pink: oklch(72% 0.12 350);
+    --red: oklch(65% 0.18 25);
     /*  */
     --muted: oklch(0.967 0.001 286.375);
     --muted-foreground: oklch(0.552 0.016 285.938);
@@ -121,6 +121,7 @@
 }
 
 @layer base {
+
     .iconify path,
     .iconify circle,
     .iconify line,
@@ -128,19 +129,22 @@
     .iconify rect {
         stroke-width: inherit !important;
     }
+
     .no-scrollbar::-webkit-scrollbar {
         display: none;
     }
+
     .no-scrollbar {
         -ms-overflow-style: none;
         scrollbar-width: none;
     }
+
     * {
         @apply border-border outline-ring/50;
     }
+
     body {
         @apply bg-background text-foreground;
         @apply font-sans antialiased bg-[--color-brand-bg] text-[--color-brand-dark];
     }
 }
-

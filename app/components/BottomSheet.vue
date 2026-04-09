@@ -6,6 +6,7 @@ import {
   DrawerOverlay,
   DrawerContent,
   DrawerTitle,
+  DrawerDescription,
 } from "vaul-vue";
 
 const isOpen = defineModel("open");
@@ -27,15 +28,18 @@ const isOpen = defineModel("open");
           class="mx-auto w-12 h-1.5 shrink-0 rounded-full bg-muted-foreground/20 mt-4 mb-2"
         />
 
-        <div class="px-6 flex-1 overflow-y-auto no-scrollbar">
+        <div class="flex-1 overflow-y-auto no-scrollbar">
           <div class="max-w-md mx-auto relative">
-            <div class="sticky top-0 z-10 bg-white pt-6 pb-1">
+            <div class="sticky -top-1 z-10 bg-white py-3 px-5">
               <DrawerTitle class="text-xl font-bold tracking-tighter">
                 <slot name="title" />
               </DrawerTitle>
+              <DrawerDescription class="sr-only">
+                <slot name="description" />
+              </DrawerDescription>
             </div>
 
-            <div class="mt-4 pb-6">
+            <div class="mt-4 pb-6 px-5">
               <slot name="content" />
             </div>
           </div>

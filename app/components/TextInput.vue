@@ -4,6 +4,8 @@ interface Props {
   modelValue: string | number;
   placeholder?: string;
   type?: string;
+  name?: string;
+  id?: string;
   inputmode?:
     | "none"
     | "text"
@@ -15,15 +17,18 @@ interface Props {
     | "url";
   leftIcon?: string;
   rightIcon?: string;
-  maxlength?:string | number;
+  maxlength?: string | number;
+  error?: string;
+  autocomplete?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   type: "text",
   placeholder: "",
+ id: () => useId(),
 });
+
 const emit = defineEmits(["update:modelValue"]);
-const isIcon = (val: string) => val.includes(":");
 
 const onInput = (e: Event) => {
   const target = e.target as HTMLInputElement;
@@ -35,6 +40,7 @@ const onInput = (e: Event) => {
   <div class="flex flex-col gap-2 w-full">
     <label
       v-if="label"
+      :for="id"
       class="text-sm font-semibold tracking-tight text-foreground/80"
     >
       {{ label }}
@@ -42,35 +48,32 @@ const onInput = (e: Event) => {
 
     <div class="relative flex items-center group">
       <div
-        v-if="leftIcon"
-        class="absolute left-4 z-10 flex items-center justify-center min-w-6 text-muted-foreground/50 group-focus-within:text-primary transition-colors pointer-events-none"
+        v-if="$slots.left"
+        class="absolute left-4 z-0 flex items-center justify-center text-muted-foreground/50 group-focus-within:text-primary transition-colors pointer-events-none"
       >
-        <Icon v-if="isIcon(leftIcon)" :name="leftIcon" mode="svg" size="20" />
-        <span v-else class="text-sm font-bold tracking-tight">{{
-          leftIcon
-        }}</span>
+        <slot name="left" />
       </div>
 
       <input
+        :id="id"
+        :name="name"
+        :type="type"
         :inputmode="inputmode"
         :value="modelValue"
         @input="onInput"
         :maxlength="maxlength"
         :placeholder="placeholder"
-        class="w-full bg-background border-2 border-transparent rounded-2xl py-3.5 transition-all outline-none text-base font-normal placeholder:text-muted-foreground/30 focus:bg-white focus:border-primary/50 focus:ring-4 focus:ring-primary/10"
-        :class="[leftIcon ? 'pl-12' : 'pl-5', rightIcon ? 'pr-12' : 'pr-5']"
+        :autocomplete="autocomplete"
+        class="w-full bg-white border border-muted-foreground/10 rounded-2xl py-4 transition-all outline-none text-sm font-normal placeholder:text-muted-foreground/30 focus:border-primary/50 focus:ring-4 focus:ring-primary/10"
+        :class="[$slots.left ? 'pl-12' : 'pl-5', $slots.right ? 'pr-12' : 'pr-5', error ? 'border-red-500/50 focus:border-red-500/70 focus:ring-red-500/10' : '']"
       />
 
-      <div
-        v-if="rightIcon"
-        class="absolute right-4 z-10 flex items-center justify-center min-w-6 text-muted-foreground/50 group-focus-within:text-primary transition-colors pointer-events-none"
-      >
-        <Icon v-if="isIcon(rightIcon)" :name="rightIcon" mode="svg" size="20" />
-        <span v-else class="text-sm font-bold tracking-tight">{{
-          rightIcon
-        }}</span>
+      <div v-if="$slots.right" class="absolute right-4 z-10 flex items-center justify-center text-muted-foreground/50 group-focus-within:text-primary transition-colors">
+        <slot name="right" />
       </div>
     </div>
+
+    <div v-if="error" class="text-red-400 text-sm font-medium">{{ error }}</div>
   </div>
 </template>
 
@@ -79,8 +82,5 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
-}
-input[type="number"] {
-  -moz-appearance: textfield;
 }
 </style>
