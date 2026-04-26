@@ -37,9 +37,7 @@ const onLoginSuccess = () => {
     email: "",
     password: "",
   });
-  navigateTo("/accounts");
-
-  alert("Login success");
+  navigateTo("/");
 };
 </script>
 

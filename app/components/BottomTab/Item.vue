@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { HugeiconsIcon } from '@hugeicons/vue';
+
 const props = defineProps({
   href: { type: String, required: true },
-  icon: { type: String, default: "home" },
+  icon: { type: Object, required: true },
 });
 
 const route = useRoute();
@@ -10,19 +12,25 @@ const isActive = computed(() => route.path === props.href);
 
 <template>
   <NuxtLink
-      :to="href"
-      :class="[
+    :to="href"
+    :class="[
       isActive
         ? 'flex-2 bg-white shadow-sm text-primary'
-        : 'flex-1 text-foreground/40'
+        : 'flex-1 text-foreground/40',
     ]"
-      class="relative rounded-full h-full flex items-center justify-center gap-1.5 transition-[flex,background-color] duration-300 ease-in-out overflow-hidden"
+    class="relative rounded-full h-full flex items-center justify-center gap-1.5 transition-[flex,background-color] duration-300 ease-in-out overflow-hidden"
   >
-    <Icon :name="`hugeicons:${icon}`" class="text-2xl shrink-0" :stroke-width="`${isActive ? 3 : 1.5}`" />
-
+    <HugeiconsIcon
+      :icon="icon"
+      :size="24"
+      color="currentColor"
+      :stroke-width="isActive ? 2 : 1.5"
+    />
     <div
-        class="grid transition-[grid-template-columns,opacity] duration-300 ease-in-out"
-        :class="isActive ? 'grid-cols-[1fr] opacity-100' : 'grid-cols-[0fr] opacity-0'"
+      class="grid transition-[grid-template-columns,opacity] duration-300 ease-in-out"
+      :class="
+        isActive ? 'grid-cols-[1fr] opacity-100' : 'grid-cols-[0fr] opacity-0'
+      "
     >
       <span class="text-xs font-semibold whitespace-nowrap overflow-hidden">
         <slot />

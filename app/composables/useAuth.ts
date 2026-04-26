@@ -6,13 +6,15 @@ export const useAuth = () => {
   const baseUrl = config.public.baseUrl;
 
   const login = async (email: string, password: string, rememberMe: boolean) => {
+    const oneDay = 60 * 60 * 24;
+    const oneMonth = oneDay * 30;
     const token = useCookie('access_token', {
       watch: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
       path: '/',
-      maxAge: rememberMe ? 60 * 60 * 24 * 30 : undefined
-    });
+      maxAge: rememberMe ? oneMonth : oneDay
+       });
 
     const refreshToken = useCookie('refresh_token', {
       secure: process.env.NODE_ENV === 'production',

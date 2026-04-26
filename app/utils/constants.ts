@@ -54,7 +54,6 @@ import {
   Brain03Icon,
   BedDoubleIcon,
   FishFoodIcon,
-  ChartCandleIcon
 } from "@hugeicons/core-free-icons";
 
 export const ICON_OPTIONS = [
@@ -153,10 +152,10 @@ export const TEXT_COLOR: Record<string, string> = {
   red: "text-red-500",
 }
 
-export const ACCOUNT_TYPES = [
-  { label: "Bank Account", value: "bank", icon: BankIcon },
-  { label: "Cash", value: "cash", icon: Money03Icon },
-  { label: "E-Wallet", value: "e-wallet", icon: Wallet01Icon },
-  { label: "Credit Card", value: "credit-card", icon: CreditCardIcon },
-  { label: "Investment", value: "investment", icon: ChartCandleIcon }
-]
+export const ACCOUNT_TYPES: Record<string, string>= {
+  bank: "Bank Account",
+  cash: "Cash",
+  "e-wallet": "E-Wallet",
+  "credit-card": "Credit Card",
+  investment: "Investment",
+}
