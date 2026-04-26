@@ -20,7 +20,7 @@ const modelValue = defineModel<string>({ default: "wallet" });
       />
 
       <div
-        class="size-14 shrink-0 flex text-xl items-center justify-center rounded-xl border duration-300 ease-in-out transition-all"
+        class="size-14 shrink-0 flex text-xl items-center justify-center rounded-2xl border duration-300 ease-in-out transition-all"
         :class="[
           modelValue === icon.value
             ? 'border-primary/70 bg-primary/10 text-primary'

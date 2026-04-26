@@ -5,7 +5,7 @@
 </script>
 
 <template>
-  <div class="sticky top-0 left-0 right-0 flex flex-row justify-center items-center gap-4 py-5">
+  <div class="sticky top-0 left-0 right-0 flex flex-row justify-center items-center gap-4 py-5 bg-background">
     <h4 class="text-xl tracking-tighter font-semibold text-center">{{ props.title }}</h4>
   </div>
 </template>

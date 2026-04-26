@@ -1,24 +1,26 @@
 <script setup lang="ts">
+import { ChartLineData01Icon, Home03Icon, PieChart02Icon, Wallet01Icon } from '@hugeicons/core-free-icons';
+
 const items = [
   {
     title: "Home",
     url: "/",
-    icon: "home-03",
+    icon: Home03Icon,
   },
   {
     title: "Accounts",
     url: "/accounts",
-    icon: "wallet-01",
+    icon: Wallet01Icon,
   },
   {
     title: "Stats",
     url: "/stats",
-    icon: "chart-line-data-01",
+    icon: ChartLineData01Icon,
   },
   {
     title: "Budgets",
     url: "/budgets",
-    icon: "pie-chart-02",
+    icon: PieChart02Icon,
   },
 ];
 </script>
