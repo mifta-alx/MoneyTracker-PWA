@@ -13,11 +13,17 @@ const emit = defineEmits(["delete", "swipe-start", "edit"]);
 
 const target = ref<HTMLElement | null>(null);
 const deleteBtnWidth = 60;
-const isOpen = ref(false);
+const isOpened = ref(false);
+
 const close = () => {
-  isOpen.value = false;
+  isOpened.value = false;
 };
-defineExpose({ closeSwipe: close });
+
+const isCurrentlyActive = () => {
+  return isOpened.value || (translateX.value !== 0);
+};
+
+defineExpose({ isOpened, closeSwipe: close, isCurrentlyActive });
 
 const { distanceX, isSwiping } = usePointerSwipe(target, {
   onSwipeStart: () => {
@@ -25,9 +31,9 @@ const { distanceX, isSwiping } = usePointerSwipe(target, {
   },
   onSwipeEnd: () => {
     if (distanceX.value > deleteBtnWidth / 2) {
-      isOpen.value = true;
+      isOpened.value = true;
     } else {
-      isOpen.value = false;
+      isOpened.value = false;
     }
   },
 });
@@ -38,7 +44,7 @@ const translateX = computed(() => {
       distanceX.value > 0 ? -Math.min(distanceX.value, deleteBtnWidth + 20) : 0;
     return x;
   }
-  return isOpen.value ? -deleteBtnWidth : 0;
+  return isOpened.value ? -deleteBtnWidth : 0;
 });
 
 const btnScale = computed(() => {
@@ -67,7 +73,7 @@ const btnOpacity = computed(() => {
       >
         <div class="flex flex-col items-center justify-center">
           <div
-            class="flex items-center justify-center size-11 bg-red-500 group-active:bg-red-600 group-active:scale-[0.97] transition-all duration-300 ease-in-out rounded-full"
+            class="flex items-center justify-center size-11 bg-red group-active:bg-red-600 group-active:scale-[0.97] transition-all duration-300 ease-in-out rounded-full"
           >
             <HugeiconsIcon :icon="Delete02Icon" :size="20" color="white" />
           </div>
@@ -79,17 +85,17 @@ const btnOpacity = computed(() => {
       </button>
     </div>
 
-    <button 
+    <button
       type="button"
       @click="emit('edit', props.account)"
       ref="target"
-      class="bg-white rounded-2xl w-full p-4 flex flex-row justify-between gap-4 h-18"
+      class="bg-white rounded-3xl w-full p-4 min-h-18 flex flex-row justify-between items-start gap-4"
       :class="{ 'duration-300': !isSwiping }"
       :style="{ transform: `translateX(${translateX}px)` }"
     >
       <div class="flex gap-3 items-center">
         <div
-          class="flex size-8 rounded-full items-center justify-center text-xl"
+          class="flex size-10 rounded-xl items-center justify-center text-xl"
           :class="[
             BG_COLOR[props.account.color] || BG_COLOR.default,
             TEXT_COLOR[props.account.color] || TEXT_COLOR.default,
@@ -100,19 +106,19 @@ const btnOpacity = computed(() => {
               ICON_OPTIONS.find((item) => item.name === props.account.icon)
                 ?.icon
             "
-            :size="18"
+            :size="20"
             color="currentColor"
             :strokeWidth="1.5"
           />
         </div>
         <div class="text-start">
           <p
-            class="text-foreground tracking-tight font-semibold text-sm line-clamp-1"
+            class="text-foreground tracking-tight font-semibold text-base line-clamp-1"
           >
             {{ props.account.name }}
           </p>
           <p class="text-[11px] text-foreground/70 tracking-wide">
-            {{ ACCOUNT_TYPES.find((item) => item.value === props.account.type)?.label || "Unknown" }}
+            {{ ACCOUNT_TYPES[props.account.type] || "Unknown" }}
           </p>
         </div>
       </div>
@@ -123,7 +129,7 @@ const btnOpacity = computed(() => {
         <p
           class="text-foreground font-bold text-right duration-300 ease-in-out transition-opacity"
           :class="
-            hide ? 'tracking-[0.2rem] text-base' : 'tracking-tight text-sm'
+            hide ? 'tracking-[0.2rem] text-base' : 'tracking-tight text-base'
           "
         >
           {{ hide ? "••••" : formatPrice(props.account.balance) }}

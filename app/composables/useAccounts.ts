@@ -3,7 +3,6 @@ import type { ApiResponse } from "~/types/api";
 
 export const useAccounts = () => {
   const loading = ref(false);
-  const error = ref(null);
   const accounts = ref<AccountItem[]>([]);
   const fieldErrors = ref<Record<string, string>>({});
   const totalBalance = ref(0);
@@ -16,8 +15,7 @@ export const useAccounts = () => {
       totalBalance.value = res.data.total_balance;
       return res.data;
     } catch (err: any) {
-      const errorResponse = err.data as ApiResponse<null>
-      throw new Error(errorResponse?.message || "Terjadi kesalahan")
+      throw new Error(getErrorMessage(err, "Failed to load accounts"));
     } finally {
       loading.value = false;
     }
@@ -25,7 +23,6 @@ export const useAccounts = () => {
 
   const saveAccount = async (account: AccountData) => {
     loading.value = true;
-    error.value = null;
     fieldErrors.value = {};
 
     try {
@@ -35,12 +32,8 @@ export const useAccounts = () => {
       })
       return res.data;
     } catch (err: any) {
-      const errorData = err.response?._data as ApiResponse<null>;
-      if (errorData?.errors) {
-        console.info("errorDatass", errorData);
-        fieldErrors.value = errorData.errors; 
-      }
-      throw new Error(errorData?.message || "Failed to save account!, please try again later.");
+      fieldErrors.value = getFieldErrors(err);
+      throw new Error(getErrorMessage(err, "Failed to save account, please try again later."));
     } finally {
       loading.value = false;
     }
@@ -48,7 +41,6 @@ export const useAccounts = () => {
 
   const updateAccount = async (account: AccountData, id: string) => {
     loading.value = true;
-    error.value = null;
     fieldErrors.value = {};
 
     try {
@@ -58,12 +50,8 @@ export const useAccounts = () => {
       })
       return res.data;
     } catch (err: any) {
-      const errorData = err.response?._data as ApiResponse<null>;
-      if (errorData?.errors) {
-        console.info("errorDatass", errorData);
-        fieldErrors.value = errorData.errors; 
-      }
-      throw new Error(errorData?.message || "Failed to update account!, please try again later.");
+      fieldErrors.value = getFieldErrors(err);
+      throw new Error(getErrorMessage(err, "Failed to update account, please try again later."));
     } finally {
       loading.value = false;
     }
@@ -71,7 +59,6 @@ export const useAccounts = () => {
 
   const deleteAccount = async (id: string) => {
     loading.value = true;
-    error.value = null;
     fieldErrors.value = {};
 
     try {
@@ -80,8 +67,7 @@ export const useAccounts = () => {
       })
       return res.data;
     } catch (err: any) {
-      const errorData = err.response?._data as ApiResponse<null>;
-      throw new Error(errorData?.message || "Failed to delete account!, please try again later.");
+      throw new Error(getErrorMessage(err, "Failed to delete account, please try again later."));
     } finally {
       loading.value = false;
     }
