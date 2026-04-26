@@ -6,29 +6,28 @@ definePageMeta({
 import { useActionStore } from "~/stores/useActionStore";
 import { formatNumberPrice } from "~/lib/utils";
 import type { AccountData } from "~/types/accounts";
-const isVisible = ref(false);
+const { isVisible, toggleVisibility } = useSettings();
+const loadingDelete = ref(false);
+const loadingSubmit = ref(false);
 
 const actionStore = useActionStore();
 const isSheetOpen = ref(false);
-const accountStore = useAccounts();
-const { fetchAccounts, saveAccount, updateAccount,fieldErrors, deleteAccount, accounts, totalBalance, loading } = accountStore;
+const isFromSheet = ref(false);
+const isSuccessDelete = ref(false);
+const isDeleteConfirmationOpen = ref(false);
+const accountListRef = ref();
 
-const openAccountSheet = () => {
-  isSheetOpen.value = true;
-};
-
-onMounted(() => {
-  actionStore.setAction(openAccountSheet);
-  fetchAccounts();
-});
-
-onUnmounted(() => {
-  actionStore.resetAction();
-});
-
-const toggleVisibility = () => {
-  isVisible.value = !isVisible.value;
-};
+const {
+  fetchAccounts,
+  saveAccount,
+  updateAccount,
+  fieldErrors,
+  deleteAccount,
+  accounts,
+  totalBalance,
+  loading,
+} = useAccounts();
+const { toastSuccess, toastError } = useToast();
 
 const formData = ref<AccountData & { id?: string }>({
   name: "",
@@ -48,23 +47,43 @@ const resetForm = () => {
   };
 };
 
+const openAccountSheet = () => {
+  isSheetOpen.value = true;
+  resetForm();
+  closeAllSwipes();
+};
+
+onMounted(() => {
+  actionStore.setAction(openAccountSheet);
+  fetchAccounts();
+});
+
+onUnmounted(() => {
+  actionStore.resetAction();
+});
+
 const handleSaveAccount = async () => {
+  loadingSubmit.value = true;
   try {
     let res;
     if (formData.value.id) {
       res = await updateAccount(formData.value, formData.value.id);
+      if (res) toastSuccess("Account updated successfully");
     } else {
       res = await saveAccount(formData.value);
+      if (res) toastSuccess("Account created successfully");
     }
     if (res) {
       isSheetOpen.value = false;
-      fetchAccounts();
+      await fetchAccounts();
     }
   } catch (err: any) {
     if (err.message === "Validation failed") {
       return;
     }
-    alert("Save account gagal: " + err.message);
+    toastError(err.message || "Something went wrong");
+  } finally {
+    loadingSubmit.value = false;
   }
 };
 
@@ -73,35 +92,85 @@ const closeAccountSheet = () => {
   resetForm();
 };
 
-const accountItemRefs = ref<any[]>([]);
-
 const closeAllSwipes = () => {
-  accountItemRefs.value.forEach((item) => {
-    if (item?.closeSwipe) item.closeSwipe();
-  });
+  accountListRef.value?.closeAllSwipes();
+};
+
+const handleOpenDeleteConfirmation = (
+  account: AccountData,
+  fromSheet = false,
+) => {
+  isSuccessDelete.value = false;
+  isFromSheet.value = fromSheet;
+
+  if (fromSheet) {
+    isSheetOpen.value = false;
+    setTimeout(() => {
+      formData.value = { ...account };
+      isDeleteConfirmationOpen.value = true;
+    }, 300);
+  } else {
+    formData.value = { ...account };
+    isDeleteConfirmationOpen.value = true;
+  }
+};
+
+const closeDeleteConfirmation = () => {
+  isDeleteConfirmationOpen.value = false;
+
+  if (!isSuccessDelete.value && isFromSheet.value) {
+    setTimeout(() => {
+      isSheetOpen.value = true;
+    }, 300);
+  }
+
+  setTimeout(() => {
+    isFromSheet.value = false;
+    isSuccessDelete.value = false;
+  }, 400);
 };
 
 const handleDeleteAccount = async (id: string) => {
-  if (confirm("Are you sure you want to delete this account?")) {
-    try {
-      await deleteAccount(id);
-      fetchAccounts();
-    } catch (err) {
-      alert("Failed to delete");
-    }
+  const targetId = typeof id === "string" ? id : formData.value.id;
+
+  if (!targetId) {
+    toastError("Account not found");
+    return;
+  }
+
+  loadingDelete.value = true;
+  try {
+    await deleteAccount(targetId);
+    isSuccessDelete.value = true;
+    isDeleteConfirmationOpen.value = false;
+
+    await fetchAccounts();
+
+    toastSuccess("Account deleted successfully");
+    resetForm();
+    toastSuccess("Account deleted successfully");
+  } catch (err) {
+    toastError("Failed to delete account");
+  } finally {
+    loadingDelete.value = false;
   }
 };
 
 const handleOpenEditAccount = (account: AccountData) => {
+  const isAnySwipeOpen = accountListRef.value?.hasOpenSwipe();
+  if (isAnySwipeOpen) {
+    closeAllSwipes();
+    return;
+  }
   formData.value = { ...account };
-  openAccountSheet();
+  isSheetOpen.value = true;
 };
 </script>
 
 <template>
   <div>
     <Header title="Accounts" />
-    <div class="flex flex-col gap-4">
+    <div class="flex flex-col">
       <div class="mt-2 flex items-center flex-col">
         <button
           @click="toggleVisibility"
@@ -134,31 +203,35 @@ const handleOpenEditAccount = (account: AccountData) => {
           </h4>
         </div>
       </div>
-      <h6 class="tracking-tighter text-foreground font-semibold">
+      <h6 class="tracking-tighter text-foreground font-semibold px-4 mb-3">
         My Accounts
       </h6>
-      <div
-        class="flex flex-col gap-4 overflow-y-auto h-full -mx-5"
-        @scroll="closeAllSwipes"
-      >
-        <template v-for="(account, index) in accounts" :key="account.id">
-          <AccountsItem
-            :account="account"
-            @edit="handleOpenEditAccount"
-            :hide="!isVisible"
-            @delete="handleDeleteAccount(account.id)"
-            :ref="(el) => (accountItemRefs[index] = el)"
-            @swipe-start="closeAllSwipes"
-          />
-        </template>
-      </div>
+      <AccountList
+        ref="accountListRef"
+        :accounts="accounts"
+        :loading="loading"
+        :is-visible="isVisible"
+        @edit="handleOpenEditAccount"
+        @delete="handleOpenDeleteConfirmation($event, false)"
+      />
 
-      <AccountsSheet
+      <AccountSheet
         :data="formData"
         :open="isSheetOpen"
         @save="handleSaveAccount"
         @close="closeAccountSheet"
+        @delete="handleOpenDeleteConfirmation($event, true)"
         :fieldErrors="fieldErrors"
+        :loading-delete="loadingDelete"
+        :loading="loadingSubmit"
+      />
+
+      <AccountDeleteConfirmation
+        :account="formData"
+        :open="isDeleteConfirmationOpen"
+        @close="closeDeleteConfirmation"
+        @delete="handleDeleteAccount"
+        :loading="loadingDelete"
       />
     </div>
   </div>
