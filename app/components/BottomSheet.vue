@@ -34,11 +34,20 @@ const hasHeader = computed(() => {
       <DrawerOverlay class="fixed inset-0 bg-foreground/40 z-50" />
 
       <DrawerContent
-        class="bg-white flex flex-col rounded-t-4xl max-h-[92%] mt-24 fixed bottom-0 left-0 right-0 z-60 outline-none"
+        class="bg-white flex flex-col rounded-t-4xl max-h-[90%] h-fit mt-24 fixed bottom-0 left-0 right-0 z-60 outline-none"
       >
         <div
           class="mx-auto w-12 h-1.5 shrink-0 rounded-full bg-muted-foreground/20 mt-4 mb-2"
         />
+
+        <DrawerTitle v-if="!slots.title" class="sr-only">
+         SHeet Title
+        </DrawerTitle>
+        
+        <DrawerDescription v-if="!slots.description" class="sr-only">
+          Sheet Description
+        </DrawerDescription>
+
         <div class="flex-1 overflow-y-auto no-scrollbar">
           <div class="max-w-md mx-auto relative">
             <div v-if="hasHeader" class="sticky -top-1 z-10 bg-white py-3 px-5">

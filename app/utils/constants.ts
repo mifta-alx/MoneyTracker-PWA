@@ -62,7 +62,7 @@ export const ICON_OPTIONS = [
   { name: "card", value: "card", icon: CreditCardIcon },
   { name: "cash", value: "cash", icon: Money03Icon },
   { name: "piggy", value: "piggy", icon: PiggyBankIcon },
-  { name: "aggrement", value: "agreement", icon: Agreement02Icon },
+  { name: "agreement", value: "agreement", icon: Agreement02Icon },
   { name: "airplane", value: "airplane", icon: Airplane01Icon },
   { name: "airpod", value: "airpod", icon: Airpod03Icon },
   { name: "alms", value: "alms", icon: AlmsIcon },

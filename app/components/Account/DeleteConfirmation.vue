@@ -72,19 +72,19 @@ const emit = defineEmits(["close", "delete"]);
           </div>
         </div>
         <div class="flex flex-col gap-2 mt-4.5 w-full">
-          <Button
+          <UiButton
             variant="danger"
             @click="emit('delete', account.id)"
             :loading="loading"
-            >Yes, Remove account</Button
+            >Yes, Remove account</UiButton
           >
-          <Button
+          <UiButton
             @click="emit('close')"
             variant="secondary"
-            :loading="loading"
+            :disabled="loading"
           >
             Cancel
-          </Button>
+          </UiButton>
         </div>
       </div>
     </template>

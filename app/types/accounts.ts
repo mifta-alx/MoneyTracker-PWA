@@ -4,14 +4,10 @@ export interface AccountData {
   balance: number;
   color: string;
   icon: string;
+  is_excluded: boolean;
 }
-export interface AccountItem {
+export interface AccountItem extends AccountData {
   id: string;
-  name: string;
-  type: string;
-  balance: number;
-  color: string;
-  icon: string;
   created_at: string;
   updated_at: string;
 }

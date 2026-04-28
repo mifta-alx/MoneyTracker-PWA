@@ -12,7 +12,7 @@ const props = defineProps<{
   fieldErrors?: Record<string, string>;
 }>();
 
-const emit = defineEmits(["save", "close", "delete"]);
+const emit = defineEmits(["save", "close", "delete", "request-appearance"]);
 
 const handleUpdate = (val: string) => {
   props.data.balance = unformatPriceBase(val);
@@ -31,8 +31,9 @@ const handleUpdate = (val: string) => {
     </template>
 
     <template #content>
-      <div class="space-y-4 relative pb-10">
+      <div class="space-y-4 relative pb-12">
         <div
+          @click="emit('request-appearance')"
           class="bg-white rounded-3xl w-full p-4 flex flex-row justify-between gap-4 border border-muted-foreground/20"
         >
           <div class="flex gap-3 items-center w-full justify-between">
@@ -64,20 +65,9 @@ const handleUpdate = (val: string) => {
                 </p>
               </div>
             </div>
-
-            <button
-              v-if="data.id"
-              @click="emit('delete', data)"
-              variant="danger"
-              class="text-red px-2 active:scale-[0.97] transition-all duration-300 ease-in-out"
-            >
-              <HugeiconsIcon
-                :icon="Delete02Icon"
-                :size="24"
-                color="currentColor"
-                :strokeWidth="1.5"
-              />
-            </button>
+            <p class="font-medium tracking-tight text-sm text-primary">
+              Change icon
+            </p>
           </div>
         </div>
         <TextInput
@@ -85,15 +75,10 @@ const handleUpdate = (val: string) => {
           name="name"
           type="text"
           label="Account Name"
-          placeholder="e.g. My Pocket"
+          placeholder="e.g. BCA, DANA, Gopay"
           v-model="data.name"
           :error="fieldErrors?.name"
         />
-
-        <div class="flex flex-col gap-3">
-          <Label>Account Type</Label>
-          <AccountTypePicker v-model="data.type" />
-        </div>
         <TextInput
           id="balance"
           name="balance"
@@ -105,21 +90,49 @@ const handleUpdate = (val: string) => {
           :model-value="formatNumberPrice(data.balance)"
           @update:model-value="handleUpdate"
           :error="fieldErrors?.balance"
-        />
-        <div class="flex gap-2 flex-col">
-          <Label>Color</Label>
-          <ColorPicker v-model="data.color" />
-        </div>
-        <div class="flex gap-2 flex-col">
-          <Label>Icon</Label>
-          <IconPicker v-model="data.icon" />
+        >
+          <template #left>
+            <p class="font-medium">Rp</p>
+          </template>
+        </TextInput>
+        <div class="flex flex-col gap-3">
+          <Label>Type</Label>
+          <UiTypePicker
+            v-model="data.type"
+            :options="ACCOUNT_TYPES || []"
+          />
         </div>
         <div
-          class="fixed bottom-0 left-0 right-0 bg-white px-5 py-2 flex gap-2 flex-col"
+          class="flex items-center justify-between p-4 bg-muted/5 rounded-3xl border border-muted-foreground/10"
         >
-          <Button @click="emit('save')" :loading="loading">
-            {{ data.id ? "Apply Changes" : "Create Account" }}
-          </Button>
+          <div class="flex flex-col gap-0.5">
+            <p class="text-sm font-semibold text-foreground">
+              Exclude from Total
+            </p>
+            <p class="text-[11px] text-muted-foreground leading-tight pr-4">
+              This account and its transactions will be excluded from your total balance and spending statistics.
+            </p>
+          </div>
+
+          <UiSwitch v-model="data.is_excluded" />
+        </div>
+        <div
+          class="fixed bottom-0 flex flex-row left-0 right-0 bg-white px-5 py-3 gap-2"
+        >
+          <UiButton @click="emit('save')" :loading="loading">
+            {{ data.id ? "Apply changes" : "Create account" }}
+          </UiButton>
+          <UiButton
+            v-if="data.id"
+            @click="emit('delete', data)"
+            variant="secondary"
+            class="w-14 grow-0 text-primary"
+            ><HugeiconsIcon
+              :icon="Delete02Icon"
+              :size="20"
+              color="currentColor"
+              :strokeWidth="1.8"
+          /></UiButton>
         </div>
       </div>
     </template>

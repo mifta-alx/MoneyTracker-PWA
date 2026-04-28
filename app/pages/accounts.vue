@@ -11,10 +11,13 @@ const loadingDelete = ref(false);
 const loadingSubmit = ref(false);
 
 const actionStore = useActionStore();
-const isSheetOpen = ref(false);
+//sheet ref state
+const isAccountSheetOpen = ref(false);
+const isAppearanceSheetOpen = ref(false);
+const isDeleteConfirmationOpen = ref(false);
+//
 const isFromSheet = ref(false);
 const isSuccessDelete = ref(false);
-const isDeleteConfirmationOpen = ref(false);
 const accountListRef = ref();
 
 const {
@@ -35,6 +38,7 @@ const formData = ref<AccountData & { id?: string }>({
   balance: 0,
   color: "default",
   icon: "wallet",
+  is_excluded: false,
 });
 
 const resetForm = () => {
@@ -44,22 +48,44 @@ const resetForm = () => {
     balance: 0,
     color: "default",
     icon: "wallet",
+    is_excluded: false,
   };
 };
 
-const openAccountSheet = () => {
-  isSheetOpen.value = true;
+const handleOpenAppearance = () => {
+  isAccountSheetOpen.value = false;
+  setTimeout(() => {
+    isAppearanceSheetOpen.value = true;
+  }, 100);
+};
+
+const handleCloseAppearance = () => {
+  isAppearanceSheetOpen.value = false;
+
+  setTimeout(() => {
+    isAccountSheetOpen.value = true;
+  }, 100);
+};
+
+const handleSaveAppearance = (data: { color: string; icon: string }) => {
+  formData.value.color = data.color;
+  formData.value.icon = data.icon;
+  handleCloseAppearance();
+};
+
+const handleOpenAccountSheet = () => {
+  isAccountSheetOpen.value = true;
   resetForm();
   closeAllSwipes();
 };
 
 onMounted(() => {
-  actionStore.setAction(openAccountSheet);
+  actionStore.setAction(handleOpenAccountSheet);
   fetchAccounts();
 });
 
 onUnmounted(() => {
-  actionStore.resetAction();
+  actionStore.resetAction(handleOpenAccountSheet);
 });
 
 const handleSaveAccount = async () => {
@@ -74,7 +100,7 @@ const handleSaveAccount = async () => {
       if (res) toastSuccess("Account created successfully");
     }
     if (res) {
-      isSheetOpen.value = false;
+      isAccountSheetOpen.value = false;
       await fetchAccounts();
     }
   } catch (err: any) {
@@ -88,8 +114,12 @@ const handleSaveAccount = async () => {
 };
 
 const closeAccountSheet = () => {
-  isSheetOpen.value = false;
-  resetForm();
+  isAccountSheetOpen.value = false;
+  setTimeout(() => {
+    if (!isAccountSheetOpen.value && !isAppearanceSheetOpen.value && !isDeleteConfirmationOpen.value) {
+      resetForm();
+    }
+  }, 300);
 };
 
 const closeAllSwipes = () => {
@@ -104,7 +134,7 @@ const handleOpenDeleteConfirmation = (
   isFromSheet.value = fromSheet;
 
   if (fromSheet) {
-    isSheetOpen.value = false;
+    isAccountSheetOpen.value = false;
     setTimeout(() => {
       formData.value = { ...account };
       isDeleteConfirmationOpen.value = true;
@@ -120,7 +150,7 @@ const closeDeleteConfirmation = () => {
 
   if (!isSuccessDelete.value && isFromSheet.value) {
     setTimeout(() => {
-      isSheetOpen.value = true;
+      isAccountSheetOpen.value = true;
     }, 300);
   }
 
@@ -141,6 +171,7 @@ const handleDeleteAccount = async (id: string) => {
   loadingDelete.value = true;
   try {
     await deleteAccount(targetId);
+    
     isSuccessDelete.value = true;
     isDeleteConfirmationOpen.value = false;
 
@@ -163,7 +194,7 @@ const handleOpenEditAccount = (account: AccountData) => {
     return;
   }
   formData.value = { ...account };
-  isSheetOpen.value = true;
+  isAccountSheetOpen.value = true;
 };
 </script>
 
@@ -217,13 +248,22 @@ const handleOpenEditAccount = (account: AccountData) => {
 
       <AccountSheet
         :data="formData"
-        :open="isSheetOpen"
+        :open="isAccountSheetOpen"
         @save="handleSaveAccount"
         @close="closeAccountSheet"
         @delete="handleOpenDeleteConfirmation($event, true)"
+        @request-appearance="handleOpenAppearance"
         :fieldErrors="fieldErrors"
         :loading-delete="loadingDelete"
         :loading="loadingSubmit"
+      />
+
+      <UiAppearanceSheet
+        :open="isAppearanceSheetOpen"
+        :color="formData.color"
+        :icon="formData.icon"
+        @save="handleSaveAppearance"
+        @close="handleCloseAppearance"
       />
 
       <AccountDeleteConfirmation

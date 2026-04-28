@@ -24,7 +24,7 @@ const modelValue = defineModel<string>({ default: "wallet" });
         :class="[
           modelValue === icon.value
             ? 'border-primary/70 bg-primary/10 text-primary'
-            : 'border-muted-foreground/20 bg-muted-foreground/5 text-muted-foreground/50',
+            : 'border-muted-foreground/20 bg-muted-foreground/3 text-muted-foreground/50',
         ]"
       >
         <HugeiconsIcon

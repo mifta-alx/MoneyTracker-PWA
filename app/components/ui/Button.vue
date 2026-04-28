@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { cn } from "~/lib/utils";
+
 interface Props {
   variant?: "primary" | "danger" | "secondary" | "ghost";
   loading?: boolean;
@@ -14,14 +16,24 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits(["click"]);
+const attrs = useAttrs();
 
 const variantClasses = {
   primary: "bg-primary text-white active:scale-[0.98]",
   danger: "bg-red text-white active:scale-[0.98]",
-  secondary: "bg-muted-foreground/10 text-muted-foreground/80 active:scale-[0.98]",
+  secondary:
+    "bg-muted-foreground/10 text-muted-foreground/80 active:scale-[0.98]",
   ghost:
     "bg-transparent text-muted-foreground border border-muted-foreground/20",
 };
+
+const buttonClasses = computed(() => {
+  return cn(
+    "grow h-14 flex flex-row gap-2 justify-center items-center py-3.5 rounded-full font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100",
+    variantClasses[props.variant],
+    attrs.class as string,
+  );
+});
 
 const handleClick = (event: MouseEvent) => {
   if (!props.loading && !props.disabled) {
@@ -34,8 +46,7 @@ const handleClick = (event: MouseEvent) => {
     :type="type"
     :disabled="disabled || loading"
     @click="handleClick"
-    class="w-full h-13 flex flex-row gap-2 justify-center items-center py-3.5 rounded-[20px] font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
-    :class="variantClasses[variant]"
+    :class="buttonClasses"
   >
     <Spinner v-if="loading" :size="20" />
 
@@ -45,3 +56,9 @@ const handleClick = (event: MouseEvent) => {
     </template>
   </button>
 </template>
+
+<script lang="ts">
+export default {
+  inheritAttrs: false,
+};
+</script>
